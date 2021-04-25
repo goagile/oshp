@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 # Build gRPC API to service
 
 SRC=api/grpc/delivery/delivery.proto

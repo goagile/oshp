@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package delivery;
 
-option go_package="github.com/goagile/dz1/api/order";
+option go_package="github.com/goagile/oshp/pkg/api/grpc/order";
 
 service Order {
     rpc UpdateOrder (UpdateOrderRequest) 

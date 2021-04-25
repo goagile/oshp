@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package delivery;
 
-option go_package="github.com/goagile/dz1/api/delivery";
+option go_package="github.com/goagile/oshp/pkg/api/grpc/delivery";
 
 service Delivery {
     rpc ScheduleDelivery (ScheduleDeliveryRequest) 
