@@ -7,7 +7,6 @@ import (
 	"log"
 	"net"
 	"net/http"
-	"time"
 
 	delivery "github.com/goagile/oshp/pkg/api/grpc/delivery"
 	order "github.com/goagile/oshp/pkg/api/grpc/order"
@@ -43,9 +42,6 @@ func main() {
 	defer conn.Close()
 	deliveryClient = delivery.NewDeliveryClient(conn)
 
-	// ctx := context.Background()
-	// go scheduleDelivery(ctx)
-
 	//
 	// Order gRPC Server
 	//
@@ -70,6 +66,9 @@ func main() {
 	}
 }
 
+//
+// ORDER REST SERVER
+//
 func setupRESTServer() *gin.Engine {
 	r := gin.Default()
 
@@ -100,9 +99,17 @@ func CreateOrder(c *gin.Context) {
 	//
 	// Call Delivery Service
 	//
-	// time.Sleep(time.Duration(i) * 3 * time.Second)
 	req := &delivery.ScheduleDeliveryRequest{
 		OrderId: 333,
+		UserId:  222,
+		Products: []*delivery.Product{
+			{
+				ProductId: 777,
+				Title:     "A Book",
+				Quantity:  2,
+				Price:     1500.25,
+			},
+		},
 	}
 	log.Println("\n\nSend Request to Delivery Service", req)
 	resp, err := deliveryClient.ScheduleDelivery(c.Request.Context(), req)
@@ -118,6 +125,9 @@ type CreateOrderRequest struct {
 	UserID string `json:"user_id"`
 }
 
+//
+// ORDER gRPC SERVER
+//
 type orderServer struct {
 	order.UnimplementedOrderServer
 }
@@ -128,19 +138,4 @@ func (*orderServer) UpdateOrder(ctx context.Context, req *order.UpdateOrderReque
 	resp.OrderId = req.OrderId
 	resp.OrderStatus = "OK"
 	return resp, nil
-}
-
-func scheduleDelivery(ctx context.Context) {
-	for i := 1; i < 4; i++ {
-		time.Sleep(time.Duration(i) * 3 * time.Second)
-		req := &delivery.ScheduleDeliveryRequest{
-			OrderId: int32(i),
-		}
-		log.Println("\n\nSend Request to Delivery Service", req)
-		resp, err := deliveryClient.ScheduleDelivery(ctx, req)
-		if err != nil {
-			log.Fatalln("deliveryClient.ScheduleDelivery", err)
-		}
-		log.Println("deliveryClient.ScheduleDelivery Resp -> ", resp)
-	}
 }

@@ -4,16 +4,39 @@ package delivery;
 
 option go_package="github.com/goagile/oshp/pkg/api/grpc/delivery";
 
+import "google/protobuf/timestamp.proto";
+
 service Delivery {
     rpc ScheduleDelivery (ScheduleDeliveryRequest) 
-        returns (ScheduleDeliveryResponse) {}
+                 returns (ScheduleDeliveryResponse) {}
 }
 
 message ScheduleDeliveryRequest {
     int32 order_id = 1;
+    int32 user_id = 2;
+    repeated Product products = 3;
+    Address address = 4;
+}
+
+message Product {
+    int32 product_id = 1;
+    string title = 2;
+    int32 quantity = 3;
+    float price = 4;
+}
+
+message Address {
+    string postal_code = 1;
+    string country = 2;
+    string city = 3;
+    string street = 4;
+    string building = 5;
+    string room = 6;
+    string comment = 7;
 }
 
 message ScheduleDeliveryResponse {
     int32 order_id = 1;
-    int32 delivery_id = 2;
+    google.protobuf.Timestamp delivery_date = 2;
+    // string delivery_date = 2;
 }
