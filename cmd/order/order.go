@@ -72,13 +72,8 @@ func main() {
 func setupRESTServer() *gin.Engine {
 	r := gin.Default()
 
-	//
-	// curl -i \\
-	// 		-X POST http://127.0.0.1:8084/orders
-	//      -H 'Content-Type: application/json'
-	//      -d '{"user_id":"777"}'
-	//
 	r.POST("/orders", CreateOrder)
+	r.GET("/orders", GetOrderStatus)
 
 	return r
 }
@@ -123,6 +118,25 @@ func CreateOrder(c *gin.Context) {
 
 type CreateOrderRequest struct {
 	UserID string `json:"user_id"`
+}
+
+func GetOrderStatus(c *gin.Context) {
+	var r GetOrderStatusRequest
+	if err := c.BindJSON(&r); err != nil {
+		log.Println("GetOrderStatusRequest BindJSON", err)
+		c.JSON(
+			http.StatusBadRequest,
+			gin.H{"error": "fail to get order status"},
+		)
+		return
+	}
+	fmt.Println("GetOrderStatusRequest", r)
+
+	c.JSON(http.StatusCreated, gin.H{"data": "order status"})
+}
+
+type GetOrderStatusRequest struct {
+	OrderID string `json:"order_id"`
 }
 
 //
